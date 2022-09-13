@@ -1,11 +1,9 @@
-import winsound
 from . import db
 
 class Team(db.Model):
-    teamName = db.Column(db.Text, primary_key=True)
-    registrationDate = db.Column(db.Date)
-    groupNumber = db.Column(db.Integer)
-    wins = db.Column(db.Integer, default=0)
-    loss = db.Column(db.Integer, default=0)
-    ties = db.Column(db.Integer, default=0)
-    goalsScored = db.Column(db.Integer, default=0)
+    team_name = db.Column(db.Text, primary_key=True)
+    registration_date = db.Column(db.Date)
+    group_number = db.Column(db.Integer)
+    match_points = db.Column(db.Integer, default=0)
+    alt_match_points = db.Column(db.Integer, default=0)
+    goals = db.Column(db.Integer, default=0)

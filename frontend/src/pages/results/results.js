@@ -11,7 +11,6 @@ import {
 import * as yup from "yup";
 import { Formik } from "formik";
 import { useState } from "react";
-import { useEffect } from "react";
 import { Key, PersonCircle } from "react-bootstrap-icons";
 import "./results.css";
 import { API_URL, API_HEADERS } from "../../api";
@@ -36,15 +35,17 @@ const Results = () => {
       method: "POST",
       headers: API_HEADERS,
       body: JSON.stringify({
-        teamName: e.teamName,
-        registrationDate: e.registrationDate,
-        groupNumber: e.groupNumber,
+        team1: e.team1,
+        team2: e.team2,
+        goals1: e.goals1,
+        goals2: e.goals2
       }),
     })
       .then(async (res) => {
         var result = await res.json();
         if (res.status === 200) {
           setErrorMsg("");
+          window.location.reload();
           return result;
         } else {
           setErrorMsg(result.message);
@@ -63,7 +64,7 @@ const Results = () => {
     <>
       <NavBar></NavBar>
       <Container className="mt-5">
-        <Row className="v-center">
+        <Row>
           <Col>
             <Card>
               <Card.Body>
@@ -72,9 +73,10 @@ const Results = () => {
                   validationSchema={schema}
                   onSubmit={(e) => register(e)}
                   initialValues={{
-                    teamName: "",
-                    registrationDate: "",
-                    groupNumber: "",
+                    team1: "",
+                    team2: "",
+                    goals1: "",
+                    goals2: "",
                     validateOnMount: true,
                   }}
                 >
@@ -179,7 +181,7 @@ const Results = () => {
                                 placeholder="2"
                                 aria-describedby="inputGroupPrepend"
                                 name="goals2"
-                                value={values.goals1}
+                                value={values.goals2}
                                 onChange={handleChange}
                                 isValid={touched.goals2 && !errors.goals2}
                                 isInvalid={!!errors.goals2}

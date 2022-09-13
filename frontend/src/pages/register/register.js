@@ -11,7 +11,6 @@ import {
 import * as yup from "yup";
 import { Formik } from "formik";
 import { useState } from "react";
-import { useEffect } from "react";
 import { Key, PersonCircle } from "react-bootstrap-icons";
 import "./register.css";
 import { API_URL, API_HEADERS } from "../../api";
@@ -44,25 +43,28 @@ const Register = () => {
         var result = await res.json();
         if (res.status === 200) {
           setErrorMsg("");
+          window.location.reload();
           return result;
         } else {
           setErrorMsg(result.message);
           return result.message;
         }
       })
-      .then((res) => console.log(res))
+      .then((res) => {
+        console.log(res);
+      })
       .catch((err) => {
         console.log(err);
       });
 
-    setSpin(false);
+    setSpin(false); 
   };
 
   return (
     <>
     <NavBar></NavBar>
       <Container className="mt-5">
-        <Row className="v-center">
+        <Row>
           <Col>
             <Card>
               <Card.Body>
