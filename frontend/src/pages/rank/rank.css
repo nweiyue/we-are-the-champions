@@ -1,0 +1,15 @@
+th,td {
+  padding: 6px;
+}
+
+.align-left {
+    text-align: left;
+}
+
+/* .qualify-header {
+    text-align: left;
+}
+
+.group-headers {
+    text-align: left;
+} */
