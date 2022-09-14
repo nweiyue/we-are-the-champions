@@ -7,7 +7,7 @@ GDS ACE Tech Assessment
 3. Running frontend
   ```
     cd frontend
-    npm i
+    npm install
     npm run start
   ```
 4. Running backend
