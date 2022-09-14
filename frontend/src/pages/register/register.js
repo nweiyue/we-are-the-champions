@@ -62,7 +62,7 @@ const Register = () => {
 
   return (
     <>
-    <NavBar></NavBar>
+      <NavBar></NavBar>
       <Container className="mt-5">
         <Row>
           <Col>

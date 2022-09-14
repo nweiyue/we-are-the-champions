@@ -18,30 +18,19 @@ import { NavBar } from "../../components/navbar/navbar";
 const Rank = () => {
   const [spin, setSpin] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [rankings, setRankings] = useState(["hello", "bye"]);
-
-  const schema = yup.object({
-    team1: yup.string().required("Required"),
-    team2: yup.string().required("Required"),
-    goals1: yup.string().required("Required"),
-    goals2: yup.string().required("Required"),
-  });
+  const [rankings, setRankings] = useState([]);
 
   const get_rank = async (e) => {
-    setSpin(true);
-
     await fetch(API_URL + "/rank", {
-      method: "POST",
+      method: "GET",
       headers: API_HEADERS,
     })
       .then(async (res) => {
         var result = await res.json();
         if (res.status === 200) {
-          setErrorMsg("");
-          window.location.reload();
+          setRankings(result.data);
           return result;
         } else {
-          setErrorMsg(result.message);
           return result.message;
         }
       })
@@ -49,8 +38,26 @@ const Rank = () => {
       .catch((err) => {
         console.log(err);
       });
+  };
 
-    setSpin(false);
+  const clear_data = async (e) => {
+    await fetch(API_URL + "/clear", {
+      method: "DELETE",
+      headers: API_HEADERS,
+    })
+      .then(async (res) => {
+        var result = await res.json();
+        if (res.status === 200) {
+          setRankings([]);
+          return result;
+        } else {
+          return result.message;
+        }
+      })
+      .then((res) => console.log(res))
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -67,7 +74,12 @@ const Rank = () => {
             >
               Get Rankings!
             </Button>
-            <Button className="me-2" variant="primary" type="submit">
+            <Button
+              className="me-2"
+              variant="primary"
+              type="submit"
+              onClick={clear_data}
+            >
               Clear Data!
             </Button>
           </Col>
@@ -124,11 +136,13 @@ const Rank = () => {
                 <tr>
                   <th>Team Name</th>
                 </tr>
-                {rankings.map((item, i) => (
-                  <tr key={i}>
-                    <td>{item}</td>
-                  </tr>
-                ))}
+                {rankings
+                  .slice(0, Math.max(rankings.length, 4))
+                  .map((item, i) => (
+                    <tr key={i}>
+                      <td>{item}</td>
+                    </tr>
+                  ))}
               </tbody>
             ) : (
               <> </>

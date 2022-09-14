@@ -46,7 +46,6 @@ def upload_results():
     team2 = data.get('team2')
     goals1 = data.get('goals1')
     goals2 = data.get('goals2')
-    print(data)
 
     err_msg = ""
 
@@ -85,3 +84,20 @@ def upload_results():
             t1.alt_match_points += 3
         db.session.commit()
         return jsonify({'message': "Results uploaded successfully!"}), 200
+
+@routes.route('/rank', methods=['GET'])
+def get_rank():
+    res = db.session.query(Team.team_name).order_by(Team.match_points.desc(), Team.goals.desc(), Team.alt_match_points.desc(), Team.registration_date.asc()).all()
+    res = [str(getattr(row, "team_name")) for row in res]
+    
+    return jsonify({'message': "Results uploaded successfully!", 'data': res}), 200
+
+@routes.route('/clear', methods=['DELETE'])
+def clear_data():
+    try:
+        db.session.query(Team).delete()
+        db.session.commit()
+    except:
+        db.session.rollback()
+    
+    return jsonify({'message': "All data cleared!"}), 200
