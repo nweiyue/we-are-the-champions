@@ -1,27 +1,14 @@
-import {
-  Button,
-  Card,
-  Container,
-  Col,
-  Row,
-  Form,
-  InputGroup,
-  Spinner,
-} from "react-bootstrap";
-import * as yup from "yup";
+import { Button, Container, Col, Row } from "react-bootstrap";
 import { useState } from "react";
-import "./rank.css";
 import { API_URL, API_HEADERS } from "../../api";
-import { FailureAlert } from "../../components/failure_alert/failure_alert";
 import { NavBar } from "../../components/navbar/navbar";
+import "./rank.css";
 
 const Rank = () => {
-  const [spin, setSpin] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
   const [team1Rankings, setTeam1Rankings] = useState([]);
   const [team2Rankings, setTeam2Rankings] = useState([]);
 
-  const get_rank = async (e) => {
+  const getRank = async (e) => {
     await fetch(API_URL + "/rank", {
       method: "GET",
       headers: API_HEADERS,
@@ -36,13 +23,12 @@ const Rank = () => {
           return result.message;
         }
       })
-      .then((res) => console.log(res))
       .catch((err) => {
-        console.log(err);
+        console.error(err);
       });
   };
 
-  const clear_data = async (e) => {
+  const clearData = async (e) => {
     await fetch(API_URL + "/clear", {
       method: "DELETE",
       headers: API_HEADERS,
@@ -57,9 +43,8 @@ const Rank = () => {
           return result.message;
         }
       })
-      .then((res) => console.log(res))
       .catch((err) => {
-        console.log(err);
+        console.error(err);
       });
   };
 
@@ -73,7 +58,7 @@ const Rank = () => {
               className="me-2"
               variant="primary"
               type="submit"
-              onClick={get_rank}
+              onClick={getRank}
             >
               Get Rankings!
             </Button>
@@ -81,7 +66,7 @@ const Rank = () => {
               className="me-2"
               variant="primary"
               type="submit"
-              onClick={clear_data}
+              onClick={clearData}
             >
               Clear Data!
             </Button>

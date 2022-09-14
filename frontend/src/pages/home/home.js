@@ -1,16 +1,5 @@
-import { Component } from "react";
-import {
-  Button,
-  Card,
-  Container,
-  Col,
-  Row,
-  Form,
-  InputGroup,
-  Spinner,
-} from "react-bootstrap";
-import "./home.css"
 import { NavBar } from "../../components/navbar/navbar";
+import "./home.css";
 
 const Home = () => {
   return (

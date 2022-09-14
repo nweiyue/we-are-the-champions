@@ -9,7 +9,7 @@ routes = Blueprint('routes', __name__)
 def register():
     data = request.get_json()
     err_msg = ""
-    teams = data.get('teamName').split('\n')
+    teams = data.get('teams').split('\n')
     
     for team in teams:
         details = [d.strip() for d in team.split(' ')]
@@ -51,7 +51,7 @@ def register():
 @routes.route('/results', methods=['POST'])
 def upload_results():
     data = request.get_json()
-    results = data.get('team1').split('\n')
+    results = data.get('results').split('\n')
 
     err_msg = ""
     for result in results:
@@ -105,13 +105,19 @@ def upload_results():
 
 @routes.route('/rank', methods=['GET'])
 def get_rank():
-    team1_res = db.session.query(Team.team_name, Team.group_number).filter_by(group_number=1).order_by(Team.match_points.desc(), Team.goals.desc(), Team.alt_match_points.desc(), Team.registration_date.asc()).all()
-    team2_res = db.session.query(Team.team_name, Team.group_number).filter_by(group_number=2).order_by(Team.match_points.desc(), Team.goals.desc(), Team.alt_match_points.desc(), Team.registration_date.asc()).all()
+    team1_res = db.session.query(Team.team_name, Team.group_number) \
+        .filter_by(group_number=1) \
+        .order_by(Team.match_points.desc(), Team.goals.desc(), Team.alt_match_points.desc(), Team.registration_date.asc()) \
+        .all()
+    team2_res = db.session.query(Team.team_name, Team.group_number) \
+        .filter_by(group_number=2) \
+        .order_by(Team.match_points.desc(), Team.goals.desc(), Team.alt_match_points.desc(), Team.registration_date.asc()) \
+        .all()
 
     team1_res = [str(getattr(row, "team_name")) for row in team1_res]
     team2_res = [str(getattr(row, "team_name")) for row in team2_res]
     
-    return jsonify({'message': "Results uploaded successfully!", 'data': {1: team1_res, 2: team2_res}}), 200
+    return jsonify({'message': "Ranked results retrieved!", 'data': {1: team1_res, 2: team2_res}}), 200
 
 @routes.route('/clear', methods=['DELETE'])
 def clear_data():

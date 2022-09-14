@@ -11,8 +11,7 @@ import {
 import * as yup from "yup";
 import { Formik } from "formik";
 import { useState } from "react";
-import { Key, PersonCircle } from "react-bootstrap-icons";
-import "./register.css";
+import { PeopleFill } from "react-bootstrap-icons";
 import { API_URL, API_HEADERS } from "../../api";
 import { FailureAlert } from "../../components/failure_alert/failure_alert";
 import { NavBar } from "../../components/navbar/navbar";
@@ -22,9 +21,7 @@ const Register = () => {
   const [errorMsg, setErrorMsg] = useState("");
 
   const schema = yup.object({
-    teamName: yup.string().required("Required"),
-    // registrationDate: yup.string().required("Required"),
-    // groupNumber: yup.string().required("Required"),
+    teams: yup.string().required("Required"),
   });
 
   const register = async (e) => {
@@ -34,9 +31,7 @@ const Register = () => {
       method: "POST",
       headers: API_HEADERS,
       body: JSON.stringify({
-        teamName: e.teamName,
-        // registrationDate: e.registrationDate,
-        // groupNumber: e.groupNumber,
+        teams: e.teams,
       }),
     })
       .then(async (res) => {
@@ -50,14 +45,11 @@ const Register = () => {
           return result.message;
         }
       })
-      .then((res) => {
-        console.log(res);
-      })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
       });
-
-    setSpin(false); 
+      
+    setSpin(false);
   };
 
   return (
@@ -73,9 +65,7 @@ const Register = () => {
                   validationSchema={schema}
                   onSubmit={(e) => register(e)}
                   initialValues={{
-                    teamName: "",
-                    // registrationDate: "",
-                    // groupNumber: "",
+                    teams: "",
                     validateOnMount: true,
                   }}
                 >
@@ -93,84 +83,29 @@ const Register = () => {
                         <div>
                           <Form.Group
                             className="mb-2 pb-2"
-                            controlId="formTeamName"
+                            controlId="formTeams"
                           >
-                            <Form.Label>Team Name</Form.Label>
+                            <Form.Label>Teams</Form.Label>
                             <InputGroup hasValidation>
                               <InputGroup.Text id="inputGroupPrepend">
-                                <PersonCircle />
+                                <PeopleFill />
                               </InputGroup.Text>
                               <Form.Control
                                 type="text"
                                 as="textarea"
-                                placeholder="teamname"
+                                placeholder="<Team A name> <Team A registration date in DD/MM> <Team A group number>"
                                 aria-describedby="inputGroupPrepend"
-                                name="teamName"
-                                value={values.teamName}
+                                name="teams"
+                                value={values.teams}
                                 onChange={handleChange}
-                                isValid={touched.teamName && !errors.teamName}
-                                isInvalid={!!errors.teamName}
+                                isValid={touched.teams && !errors.teams}
+                                isInvalid={!!errors.v}
                               />
                               <Form.Control.Feedback type="invalid">
-                                {errors.teamName}
+                                {errors.teams}
                               </Form.Control.Feedback>
                             </InputGroup>
                           </Form.Group>
-
-                          {/* <Form.Group
-                            className="mb-2 pb-2"
-                            controlId="formRegistrationDate"
-                          >
-                            <Form.Label>Registration Date (DD/MM)</Form.Label>
-                            <InputGroup hasValidation>
-                              <InputGroup.Text id="inputGroupPrepend">
-                                <Key />
-                              </InputGroup.Text>
-                              <Form.Control
-                                type="text"
-                                placeholder="12/09"
-                                aria-describedby="inputGroupPrepend"
-                                name="registrationDate"
-                                onChange={handleChange}
-                                value={values.registrationDate}
-                                isValid={
-                                  touched.registrationDate &&
-                                  !errors.registrationDate
-                                }
-                                isInvalid={!!errors.registrationDate}
-                              />
-                              <Form.Control.Feedback type="invalid">
-                                {errors.registrationDate}
-                              </Form.Control.Feedback>
-                            </InputGroup>
-                          </Form.Group>
-
-                          <Form.Group
-                            className="mb-3 pb-3"
-                            controlId="formGroupNumber"
-                          >
-                            <Form.Label>Group Number</Form.Label>
-                            <InputGroup hasValidation>
-                              <InputGroup.Text id="inputGroupPrepend">
-                                <Key />
-                              </InputGroup.Text>
-                              <Form.Control
-                                type="text"
-                                placeholder="1"
-                                aria-describedby="inputGroupPrepend"
-                                name="groupNumber"
-                                onChange={handleChange}
-                                value={values.groupNumber}
-                                isValid={
-                                  touched.groupNumber && !errors.groupNumber
-                                }
-                                isInvalid={!!errors.groupNumber}
-                              />
-                              <Form.Control.Feedback type="invalid">
-                                {errors.groupNumber}
-                              </Form.Control.Feedback>
-                            </InputGroup>
-                          </Form.Group> */}
 
                           {errorMsg !== "" ? (
                             <FailureAlert errorMsg={errorMsg} />
