@@ -23,8 +23,8 @@ const Register = () => {
 
   const schema = yup.object({
     teamName: yup.string().required("Required"),
-    registrationDate: yup.string().required("Required"),
-    groupNumber: yup.string().required("Required"),
+    // registrationDate: yup.string().required("Required"),
+    // groupNumber: yup.string().required("Required"),
   });
 
   const register = async (e) => {
@@ -35,8 +35,8 @@ const Register = () => {
       headers: API_HEADERS,
       body: JSON.stringify({
         teamName: e.teamName,
-        registrationDate: e.registrationDate,
-        groupNumber: e.groupNumber,
+        // registrationDate: e.registrationDate,
+        // groupNumber: e.groupNumber,
       }),
     })
       .then(async (res) => {
@@ -74,8 +74,8 @@ const Register = () => {
                   onSubmit={(e) => register(e)}
                   initialValues={{
                     teamName: "",
-                    registrationDate: "",
-                    groupNumber: "",
+                    // registrationDate: "",
+                    // groupNumber: "",
                     validateOnMount: true,
                   }}
                 >
@@ -102,6 +102,7 @@ const Register = () => {
                               </InputGroup.Text>
                               <Form.Control
                                 type="text"
+                                as="textarea"
                                 placeholder="teamname"
                                 aria-describedby="inputGroupPrepend"
                                 name="teamName"
@@ -116,7 +117,7 @@ const Register = () => {
                             </InputGroup>
                           </Form.Group>
 
-                          <Form.Group
+                          {/* <Form.Group
                             className="mb-2 pb-2"
                             controlId="formRegistrationDate"
                           >
@@ -169,7 +170,7 @@ const Register = () => {
                                 {errors.groupNumber}
                               </Form.Control.Feedback>
                             </InputGroup>
-                          </Form.Group>
+                          </Form.Group> */}
 
                           {errorMsg !== "" ? (
                             <FailureAlert errorMsg={errorMsg} />

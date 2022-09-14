@@ -23,9 +23,9 @@ const Results = () => {
 
   const schema = yup.object({
     team1: yup.string().required("Required"),
-    team2: yup.string().required("Required"),
-    goals1: yup.string().required("Required"),
-    goals2: yup.string().required("Required"),
+    // team2: yup.string().required("Required"),
+    // goals1: yup.string().required("Required"),
+    // goals2: yup.string().required("Required"),
   });
 
   const register = async (e) => {
@@ -36,9 +36,9 @@ const Results = () => {
       headers: API_HEADERS,
       body: JSON.stringify({
         team1: e.team1,
-        team2: e.team2,
-        goals1: e.goals1,
-        goals2: e.goals2
+        // team2: e.team2,
+        // goals1: e.goals1,
+        // goals2: e.goals2
       }),
     })
       .then(async (res) => {
@@ -74,9 +74,9 @@ const Results = () => {
                   onSubmit={(e) => register(e)}
                   initialValues={{
                     team1: "",
-                    team2: "",
-                    goals1: "",
-                    goals2: "",
+                    // team2: "",
+                    // goals1: "",
+                    // goals2: "",
                     validateOnMount: true,
                   }}
                 >
@@ -93,6 +93,32 @@ const Results = () => {
                       {!spin ? (
                         <div>
                           <Form.Group
+                            className="mb-2 pb-2"
+                            controlId="formTeam1"
+                          >
+                            <Form.Label>Team 1's Name</Form.Label>
+                            <InputGroup hasValidation>
+                              <InputGroup.Text id="inputGroupPrepend">
+                                <PersonCircle />
+                              </InputGroup.Text>
+                              <Form.Control
+                                type="text"
+                                as="textarea"
+                                placeholder="teamname1"
+                                aria-describedby="inputGroupPrepend"
+                                name="team1"
+                                value={values.team1}
+                                onChange={handleChange}
+                                isValid={touched.team1 && !errors.team1}
+                                isInvalid={!!errors.team1}
+                              />
+                              <Form.Control.Feedback type="invalid">
+                                {errors.team1}
+                              </Form.Control.Feedback>
+                            </InputGroup>
+                          </Form.Group>
+
+                          {/* <Form.Group
                             className="mb-2 pb-2"
                             controlId="formTeam1"
                           >
@@ -190,7 +216,7 @@ const Results = () => {
                                 {errors.goals2}
                               </Form.Control.Feedback>
                             </InputGroup>
-                          </Form.Group>
+                          </Form.Group> */}
 
                           {errorMsg !== "" ? (
                             <FailureAlert errorMsg={errorMsg} />

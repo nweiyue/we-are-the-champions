@@ -8,61 +8,75 @@ routes = Blueprint('routes', __name__)
 @routes.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
-    team_name = data.get('teamName')
-    registration_date = data.get('registrationDate')
-    group_number = data.get('groupNumber')
     err_msg = ""
-    date = datetime.now()
-
-    team = Team.query.filter_by(team_name=team_name).first()
-    if team:
-        err_msg = f"There already exist a team called {team_name}."
-    elif not group_number.isdigit():
-        err_msg = "Group number must be a number."
-    else:
-        date_str = registration_date.split('/')
-        if len(date_str) == 2 and len(date_str[0]) == 2 and len(date_str[1]) == 2:
-            try:
-                date = datetime.strptime(registration_date, "%d/%m")
-            except ValueError:
-                err_msg = "Invalid date format."
-                return jsonify({'message': err_msg}), 500
-        else:
-            err_msg = "Invalid date format."
+    teams = data.get('teamName').split('\n')
     
-    if err_msg != "":
-        return jsonify({'message': err_msg}), 500
-    else:
+    for team in teams:
+        details = [d.strip() for d in team.split(' ')]
+        if len(details) != 3:
+            err_msg = "Input of each team must be in the format of <Team Name> <Registration date in DD/MM> <Group Number>"
+            break
+
+        team_name, registration_date, group_number = details
+        date = datetime.now()
+
+        team = Team.query.filter_by(team_name=team_name).first()
+        if team:
+            err_msg = f"There already exist a team called {team_name}."
+            break
+        if not group_number.isdigit():
+            err_msg = "Group number must be a number."
+            break
+        
+        date_str = registration_date.split('/')
+        if len(date_str) != 2 or len(date_str[0]) != 2 or len(date_str[1]) != 2:
+            err_msg = "Invalid date format."
+            break
+        try:
+            date = datetime.strptime(registration_date, "%d/%m")
+        except ValueError:
+            err_msg = "Invalid date format."
+            return jsonify({'message': err_msg}), 500
+                
         group_number = int(group_number)
         team = Team(team_name=team_name, registration_date=date, group_number=group_number)
         db.session.add(team)
+
+    if err_msg != "":
+        return jsonify({'message': err_msg}), 500
+    else:
         db.session.commit()
         return jsonify({'message': "Team added successfully!"}), 200
 
 @routes.route('/results', methods=['POST'])
 def upload_results():
     data = request.get_json()
-    team1 = data.get('team1')
-    team2 = data.get('team2')
-    goals1 = data.get('goals1')
-    goals2 = data.get('goals2')
+    results = data.get('team1').split('\n')
 
     err_msg = ""
+    for result in results:
+        details = [d.strip() for d in result.split(' ')]
+        if len(details) != 4:
+            err_msg = "Input of each result must be in the format of <Team 1 name> <Team 2 name> <Team 1 goals scored> <Team 2 goals scored>"
+            break
 
-    t1 = Team.query.filter_by(team_name=team1).first()
-    t2 = Team.query.filter_by(team_name=team2).first()
-    if team1 == team2:
-        err_msg = f"The 2 teamnames must be different."
-    elif not t1 or not t2:
-        err_msg = f"Both of teams must be registered"
-    elif not goals1.isdigit() or not goals2.isdigit():
-        err_msg = "Goals scored must be a number."
-    elif t1.group_number != t2.group_number:
-        err_msg = "Both teams must be in the same group."
-    
-    if err_msg != "":
-        return jsonify({'message': err_msg}), 500
-    else:
+        team1, team2, goals1, goals2 = details
+
+        t1 = Team.query.filter_by(team_name=team1).first()
+        t2 = Team.query.filter_by(team_name=team2).first()
+        if team1 == team2:
+            err_msg = f"The 2 teamnames must be different."
+            break
+        if not t1 or not t2:
+            err_msg = f"Both of teams must be registered."
+            break
+        if not goals1.isdigit() or not goals2.isdigit():
+            err_msg = "Goals scored must be a number."
+            break
+        if t1.group_number != t2.group_number:
+            err_msg = "Both teams must be in the same group."
+            break
+
         goals1 = int(goals1)
         goals2 = int(goals2)
         t1.goals += goals1
@@ -82,15 +96,22 @@ def upload_results():
             t2.alt_match_points += 1
             t1.match_points += 3
             t1.alt_match_points += 3
+
+    if err_msg != "":
+        return jsonify({'message': err_msg}), 500
+    else:
         db.session.commit()
         return jsonify({'message': "Results uploaded successfully!"}), 200
 
 @routes.route('/rank', methods=['GET'])
 def get_rank():
-    res = db.session.query(Team.team_name).order_by(Team.match_points.desc(), Team.goals.desc(), Team.alt_match_points.desc(), Team.registration_date.asc()).all()
-    res = [str(getattr(row, "team_name")) for row in res]
+    team1_res = db.session.query(Team.team_name, Team.group_number).filter_by(group_number=1).order_by(Team.match_points.desc(), Team.goals.desc(), Team.alt_match_points.desc(), Team.registration_date.asc()).all()
+    team2_res = db.session.query(Team.team_name, Team.group_number).filter_by(group_number=2).order_by(Team.match_points.desc(), Team.goals.desc(), Team.alt_match_points.desc(), Team.registration_date.asc()).all()
+
+    team1_res = [str(getattr(row, "team_name")) for row in team1_res]
+    team2_res = [str(getattr(row, "team_name")) for row in team2_res]
     
-    return jsonify({'message': "Results uploaded successfully!", 'data': res}), 200
+    return jsonify({'message': "Results uploaded successfully!", 'data': {1: team1_res, 2: team2_res}}), 200
 
 @routes.route('/clear', methods=['DELETE'])
 def clear_data():

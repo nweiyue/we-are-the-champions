@@ -18,7 +18,8 @@ import { NavBar } from "../../components/navbar/navbar";
 const Rank = () => {
   const [spin, setSpin] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [rankings, setRankings] = useState([]);
+  const [team1Rankings, setTeam1Rankings] = useState([]);
+  const [team2Rankings, setTeam2Rankings] = useState([]);
 
   const get_rank = async (e) => {
     await fetch(API_URL + "/rank", {
@@ -28,7 +29,8 @@ const Rank = () => {
       .then(async (res) => {
         var result = await res.json();
         if (res.status === 200) {
-          setRankings(result.data);
+          setTeam1Rankings(result.data[1]);
+          setTeam2Rankings(result.data[2]);
           return result;
         } else {
           return result.message;
@@ -48,7 +50,8 @@ const Rank = () => {
       .then(async (res) => {
         var result = await res.json();
         if (res.status === 200) {
-          setRankings([]);
+          setTeam1Rankings([]);
+          setTeam2Rankings([]);
           return result;
         } else {
           return result.message;
@@ -88,13 +91,13 @@ const Rank = () => {
         <Row>
           <Col>
             <h4 className="align-left">Group 1</h4>
-            {rankings.length !== 0 ? (
+            {team1Rankings.length !== 0 ? (
               <tbody>
                 <tr>
                   <th>Rank</th>
                   <th>Team Name</th>
                 </tr>
-                {rankings.map((item, i) => (
+                {team1Rankings.map((item, i) => (
                   <tr key={i}>
                     <td>{i + 1}</td>
                     <td>{item}</td>
@@ -107,13 +110,13 @@ const Rank = () => {
           </Col>
           <Col>
             <h4 className="align-left">Group 2</h4>
-            {rankings.length !== 0 ? (
+            {team2Rankings.length !== 0 ? (
               <tbody>
                 <tr>
                   <th>Rank</th>
                   <th>Team Name</th>
                 </tr>
-                {rankings.map((item, i) => (
+                {team2Rankings.map((item, i) => (
                   <tr key={i}>
                     <td>{i + 1}</td>
                     <td>{item}</td>
@@ -131,13 +134,13 @@ const Rank = () => {
         <Row>
           <Col>
             <h4 className="align-left">Group 1</h4>
-            {rankings.length !== 0 ? (
+            {team1Rankings.length !== 0 ? (
               <tbody>
                 <tr>
                   <th>Team Name</th>
                 </tr>
-                {rankings
-                  .slice(0, Math.max(rankings.length, 4))
+                {team1Rankings
+                  .slice(0, Math.min(team1Rankings.length, 4))
                   .map((item, i) => (
                     <tr key={i}>
                       <td>{item}</td>
@@ -150,16 +153,18 @@ const Rank = () => {
           </Col>
           <Col>
             <h4 className="align-left">Group 2</h4>
-            {rankings.length !== 0 ? (
+            {team2Rankings.length !== 0 ? (
               <tbody>
                 <tr>
                   <th>Team Name</th>
                 </tr>
-                {rankings.map((item, i) => (
-                  <tr key={i}>
-                    <td>{item}</td>
-                  </tr>
-                ))}
+                {team2Rankings
+                  .slice(0, Math.min(team1Rankings.length, 4))
+                  .map((item, i) => (
+                    <tr key={i}>
+                      <td>{item}</td>
+                    </tr>
+                  ))}
               </tbody>
             ) : (
               <> </>
