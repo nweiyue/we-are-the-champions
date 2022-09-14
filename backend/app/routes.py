@@ -21,11 +21,24 @@ def register():
         date = datetime.now()
 
         team = Team.query.filter_by(team_name=team_name).first()
+        num_total_teams = Team.query.count()
+        num_group_members = Team.query.filter_by(group_number=group_number).count()
+
         if team:
             err_msg = f"There already exist a team called {team_name}."
             break
+        if num_total_teams == 12:
+            err_msg = "There already exist 12 teams."
+            break
+        if num_group_members == 6:
+            err_msg = f"Group number {group_number} already has 6 teams."
+            break
         if not group_number.isdigit():
             err_msg = "Group number must be a number."
+            break
+        
+        if group_number != '1' and group_number != '2':
+            err_msg = "Group number must either be 1 or 2."
             break
         
         date_str = registration_date.split('/')
@@ -92,10 +105,10 @@ def upload_results():
             t1.match_points += 0
             t1.alt_match_points += 1
         else:
-            t2.match_points += 1
-            t2.alt_match_points += 1
-            t1.match_points += 3
+            t1.match_points += 1
             t1.alt_match_points += 3
+            t2.match_points += 1
+            t2.alt_match_points += 3
 
     if err_msg != "":
         return jsonify({'message': err_msg}), 500
@@ -116,7 +129,6 @@ def get_rank():
 
     team1_res = [str(getattr(row, "team_name")) for row in team1_res]
     team2_res = [str(getattr(row, "team_name")) for row in team2_res]
-    
     return jsonify({'message': "Ranked results retrieved!", 'data': {1: team1_res, 2: team2_res}}), 200
 
 @routes.route('/clear', methods=['DELETE'])
@@ -128,3 +140,4 @@ def clear_data():
         db.session.rollback()
     
     return jsonify({'message': "All data cleared!"}), 200
+    

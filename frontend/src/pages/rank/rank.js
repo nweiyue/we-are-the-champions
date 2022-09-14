@@ -144,7 +144,7 @@ const Rank = () => {
                   <th>Team Name</th>
                 </tr>
                 {team2Rankings
-                  .slice(0, Math.min(team1Rankings.length, 4))
+                  .slice(0, Math.min(team2Rankings.length, 4))
                   .map((item, i) => (
                     <tr key={i}>
                       <td>{item}</td>
